@@ -7,8 +7,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Chat com IA</h1>
+
+    <button class="chat-button" onclick="toggleChat()">💬</button>
+
+    <div class="chat-container" style="display: none;">
+        <div class="chat-header">
+            Chat com IA 
+            <span style="float: right; cursor: pointer;" onclick="toggleChat()">✖</span>
+        </div>
         <div class="input-container">
             <textarea id="prompt" placeholder="Digite sua pergunta"></textarea>
             <button onclick="perguntar();">Enviar</button>
