@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat com IA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <!-- Balão do Chat com Mensagem Inicial e Botão -->
+    <div class="chat-message-container">
+        <div class="chat-message">Olá! Como posso te ajudar?</div>
+        <button class="chat-button">
+            <!-- O clique aqui agora chama a função toggleChat -->
+            <img src="img/marisol2.jpg" alt="Avatar" class="chat-avatar" onclick="toggleChat()">
+        </button>
+    </div>
+    
+    
+    <!-- Container do Chat -->
+    <div class="chat-container">
+        <div class="chat-header">
+            Chat com IA 
+            <span style="float: right; cursor: pointer;" onclick="toggleChat()">✖</span>
+        </div>
+        <div class="chat-body">
+            <div id="result" class="result"></div>
+        </div>
+        <div class="input-container">
+            <textarea id="prompt" placeholder="Digite sua pergunta"></textarea>
+            <button onclick="perguntar();">Enviar</button>
+        </div>
+    </div>
+    
+    <script src="IaGoogle.js"></script> <!-- Seu arquivo JS -->
+</body>
+</html>

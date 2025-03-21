@@ -86,50 +86,25 @@ function formatText(text) {
     .replace(/\n/g, "<br>"); // Quebra de linha
 }
 
-// Função para tornar o botão móvel
-function dragButton(button) {
-  let offsetX,
-    offsetY,
-    isDragging = false;
-
-  button.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    offsetX = e.clientX - button.getBoundingClientRect().left;
-    offsetY = e.clientY - button.getBoundingClientRect().top;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-      let x = e.clientX - offsetX;
-      let y = e.clientY - offsetY;
-
-      // Mantém o botão dentro da tela
-      x = Math.max(0, Math.min(window.innerWidth - button.offsetWidth, x));
-      y = Math.max(0, Math.min(window.innerHeight - button.offsetHeight, y));
-
-      button.style.left = x + "px";
-      button.style.top = y + "px";
-    }
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-  });
-}
-
 // Função para mostrar ou esconder o chat próximo ao botão
 function toggleChat() {
   const chatBox = document.querySelector(".chat-container");
   const chatButton = document.querySelector(".chat-button");
+  const chatMessageContainer = document.querySelector(".chat-message-container");
+  const result = document.getElementById("result");
 
   if (chatBox.style.display === "none" || chatBox.style.display === "") {
     chatBox.style.display = "flex"; // Mostra o chat
     chatBox.classList.add("show"); // Adiciona a classe
+    chatMessageContainer.style.display = "none"; // Esconde a mensagem de boas-vindas e o botão
 
-    // Posiciona o chat próximo ao botão
-    const buttonRect = chatButton.getBoundingClientRect();
-    chatBox.style.left = buttonRect.left + "px";
-    chatBox.style.top = buttonRect.top - chatBox.offsetHeight - 10 + "px"; // Acima do botão
+    // Esconde as mensagens também
+    result.style.display = "block"; 
+
+    // Posiciona o chat no topo
+    chatBox.style.position = "fixed";
+    chatBox.style.left = "80%"; // Centraliza no eixo X
+    chatBox.style.top = "40%"; // Posição no topo
 
     // Ajusta caso o chat ultrapasse os limites da tela
     if (
@@ -138,12 +113,20 @@ function toggleChat() {
     ) {
       chatBox.style.left = window.innerWidth - chatBox.offsetWidth - 10 + "px";
     }
-    if (parseInt(chatBox.style.top) < 0) {
-      chatBox.style.top = buttonRect.bottom + 10 + "px"; // Se não couber em cima, coloca embaixo
-    }
   } else {
     chatBox.style.display = "none"; // Esconde o chat
     chatBox.classList.remove("show");
+
+    // Mostra novamente o botão e a mensagem
+    chatMessageContainer.style.display = "flex"; // Mostra a mensagem de boas-vindas e o botão
+
+    // Esconde as mensagens
+    result.style.display = "none"; 
+
+    // Posiciona o chat no canto inferior
+    chatBox.style.position = "fixed";
+    chatBox.style.left = "10px"; // Fixa o chat no canto inferior esquerdo
+    chatBox.style.bottom = "10px"; // Fixa o chat no canto inferior
   }
 }
 
@@ -151,5 +134,4 @@ function toggleChat() {
 document.addEventListener("DOMContentLoaded", () => {
   const chatButton = document.querySelector(".chat-button");
   chatButton.style.position = "fixed"; // Garante que o botão fique fixo na tela
-  dragButton(chatButton);
 });

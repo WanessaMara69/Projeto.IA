@@ -6,40 +6,86 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end; /* Alinha o conteúdo na parte inferior da tela */
     height: 100vh;
+    position: relative;
+}
+
+/* Estilo da mensagem inicial e do botão juntos */
+.chat-message-container {
+    position: fixed; /* Torna o contêiner fixo na tela */
+    bottom: 100px; /* Distância acima do botão do chat */
+    right: 80px; /* Distância à esquerda do botão do chat */
+    background: #3caf85;
+    color: white;
+    padding: 18px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+    max-width: 350px;
+}
+
+/* Estilo da mensagem */
+.chat-message {
+    flex-grow: 1;
+    padding-right: 50px; /* Espaço entre a mensagem e o botão */
 }
 
 /* Estilo do botão flutuante */
 .chat-button {
-    position: fixed; /* Mantém o botão fixo na tela */
-    bottom: 20px;
-    right: 20px;
-    background: #007bff;
+    background: #3caf85;
     color: white;
     border: none;
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    font-size: 24px;
-    cursor: grab; /* Ícone de "mão aberta" para indicar que pode ser arrastado */
+    right: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
+    cursor: pointer !important;
 }
 
-.chat-button:active {
-    cursor: grabbing; /* Ícone de "mão fechada" enquanto arrasta */
+/* Estilo do avatar */
+.chat-avatar {
+    width: 100px;  /* Tamanho do avatar */
+    height: 50px;
+    border-radius: 300%;
+    object-fit: cover;  /* Garante que a imagem não distorça */
+    cursor: pointer; /* Adiciona o cursor de clique ao avatar */
 }
 
+/* Hover effect no botão */
 .chat-button:hover {
     transform: scale(1.1);
 }
 
+.chat-header span {
+    cursor: pointer !important; /* Garante que o cursor de pointer seja aplicado no botão de fechar */
+    z-index: 1002; /* Certifique-se de que o botão de fechar também tenha um z-index superior aos outros elementos */
+}
+
+/* Se necessário, defina o cursor pointer diretamente nos elementos interativos */
+.chat-button img, .chat-header span {
+    cursor: pointer !important;
+}
+
+
 /* Estilo do contêiner do chat */
 .chat-container {
-    position: absolute; /* Agora o chat é posicionado dinamicamente */
+    position: fixed; /* Fixa o chat na tela */
+    bottom: 0; /* Posiciona o chat no fundo da tela */
+    right: 20px; /* Um pouco à direita */
     width: 300px;
-    height: 400px;
+    height: 500px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -47,43 +93,39 @@ body {
     flex-direction: column;
     overflow: hidden;
     z-index: 1000;
+    visibility: hidden; /* Começa invisível */
+    opacity: 0; /* Começa invisível */
+    transition: opacity 0.3s ease-in-out;
 }
 
 /* Mostrar o chat */
 .chat-container.show {
-    visibility: visible; /* Torna visível quando a classe .show for aplicada */
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Estilo do cabeçalho do chat */
 .chat-header {
-    background: #007bff;
+    background: #3caf85;
     color: white;
     padding: 10px;
     text-align: center;
     font-weight: bold;
     position: relative;
-    cursor: pointer; /* Certifique-se de que o cabeçalho do chat também tem o ponteiro */
+    cursor: pointer;
 }
 
-
-/* Estilo para animação de fade-in do chat */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Estilo do contêiner de entrada */
 .input-container {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ccc;
+    position: absolute;
+    bottom: 0; /* Fixando a barra de entrada no fundo */
+    width: 100%;
+    background-color: #fff; /* Certifique-se de que o fundo seja branco */
+    box-sizing: border-box; /* Garante que o padding não afete o tamanho do elemento */
 }
+
 
 /* Estilo do textarea */
 textarea {
@@ -99,14 +141,14 @@ button {
     margin-left: 8px;
     padding: 8px 12px;
     border: none;
-    background: #007bff;
+    background: #3caf85;
     color: white;
     border-radius: 5px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #3caf85;
 }
 
 /* Estilo da área de resultados (onde as mensagens aparecerão) */
@@ -115,7 +157,8 @@ button:hover {
     flex-direction: column;
     padding: 10px;
     overflow-y: auto;
-    max-height: 300px;
+    max-height: 370px;
+    flex-grow: 1;
 }
 
 /* Estilo das mensagens */
@@ -127,15 +170,17 @@ button:hover {
     width: fit-content;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    opacity: 0;
-    animation: fadeIn 0.5s ease-in-out forwards;
+    opacity: 1; /* Garantir que a opacidade seja 1 */
+    animation: none; /* Desativa a animação de fade-in */
 }
+
 
 /* Estilo da mensagem do usuário (direita) */
 .message.user {
-    background: #007bff;
+    background: #3caf85;
     color: white;
     align-self: flex-end; /* Alinha a mensagem do usuário à direita */
+    margin-left: auto;
 }
 
 /* Estilo da mensagem do bot (esquerda) */
@@ -144,8 +189,6 @@ button:hover {
     color: black;
     align-self: flex-start; /* Alinha a mensagem do bot à esquerda */
 }
-
-
 
 /* Estilo da animação para "digitando..." */
 .typing {
