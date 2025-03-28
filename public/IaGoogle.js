@@ -1,47 +1,25 @@
-function gerarConteudo(prompt, typingIndicator) {
-  const apiKey = ""; // Chave de API
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-  const data = {
-    contents: [
-      {
-        parts: [
-          {
-            text: prompt + "Responda de forma curta e objetiva.",
-          },
-        ],
-      },
-    ],
+function gerarConteudo(prompt) {
+  console.log(prompt);
+  // Simulando um banco de dados com respostas pré-definidas
+  const baseDeRespostas = {
+    "qual é o site da sefin?": "https://www.sefin.fortaleza.ce.gov.br/Home",
+    "qual o site do google?":
+      "<a href='https://www.google.com' target='_blank'>Google</a>",
   };
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json()) // Converte para JSON
-    .then((result) => {
-      typingIndicator.remove(); // Remove o efeito "digitando..."
+  const result = baseDeRespostas[prompt.toLowerCase()] || null;
+  console.log();
 
-      // Verifica se a resposta da API contém um texto válido
-      if (result.candidates && result.candidates[0].content.parts[0].text) {
-        const resposta = result.candidates[0].content.parts[0].text;
-        console.log("Resposta da IA:", resposta);
-        addMessage(resposta, "bot");
-      } else {
-        addMessage("Desculpe, não consegui entender sua pergunta.", "bot");
-      }
-    })
-    .catch((error) => {
-      console.error("Erro ao gerar conteúdo:", error);
-      typingIndicator.remove();
-      addMessage("Erro ao obter resposta da IA.", "bot");
-    });
+  if (result) {
+    const resposta = result;
+    console.log("Resposta da IA:", resposta);
+    addMessage(resposta, "bot");
+  } else {
+    addMessage("Desculpe, não consegui entender sua pergunta.", "bot");
+  }
 }
 
-function perguntar() {
+async function perguntar() {
   const prompt = document.getElementById("prompt").value.trim();
   const result = document.getElementById("result");
 
@@ -50,14 +28,37 @@ function perguntar() {
   // Adiciona a mensagem do usuário no chat
   addMessage(prompt, "user");
 
-  // Exibe efeito "digitando..." da IA
-  const typingIndicator = addMessage(
-    '<div class="typing"><span>.</span><span>.</span><span>.</span></div>',
-    "bot"
-  );
+  try {
+    // Faz a requisição para o backend e aguarda a resposta
+    const resposta = await fetch("http://localhost:3000/perguntar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pergunta: prompt }),
+    });
 
-  // Chama a função para gerar a resposta da IA e passa o indicador de digitação para removê-lo depois
-  gerarConteudo(prompt, typingIndicator);
+    // Verifica se a resposta foi bem-sucedida
+    if (!resposta.ok) {
+      throw new Error(
+        `Resposta da API não foi bem-sucedida. Status: ${resposta.status}`
+      );
+    }
+
+    // Converte a resposta em JSON
+    const data = await resposta.json();
+
+    // Verifica se a resposta contém uma URL e a transforma em link clicável
+    const respostaComLink = data.resposta.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href="$&" target="_blank">$&</a>'
+    );
+
+    // Exibe a resposta formatada no chat
+    addMessage(respostaComLink, "bot");
+  } catch (error) {
+    // Se der erro na requisição
+    addMessage("Erro ao buscar resposta. Tente novamente.", "bot");
+    console.error("Erro na requisição:", error);
+  }
 
   // Limpa o campo de entrada
   document.getElementById("prompt").value = "";
@@ -69,7 +70,17 @@ function addMessage(text, sender) {
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", sender);
-  messageDiv.innerHTML = text;
+
+  // Se for uma mensagem do bot, adiciona o avatar
+  if (sender === "bot") {
+    const avatar = document.createElement("img");
+    avatar.classList.add("avatar");
+    avatar.src = "img/marisol2.jpg"; // Caminho para o avatar
+    messageDiv.appendChild(avatar); // Adiciona o avatar ao começo da mensagem
+  }
+
+  // Adiciona o HTML diretamente, permitindo que o <a> seja interpretado
+  messageDiv.innerHTML += text;
 
   result.appendChild(messageDiv);
 
@@ -80,58 +91,58 @@ function addMessage(text, sender) {
 }
 
 function formatText(text) {
+  // Aqui, substituímos o Markdown por HTML, mas sem interferir no conteúdo HTML (como <a>)
   return text
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Negrito
     .replace(/\*(.*?)\*/g, "<em>$1</em>") // Itálico
     .replace(/\n/g, "<br>"); // Quebra de linha
 }
 
-// Função para mostrar ou esconder o chat próximo ao botão
 function toggleChat() {
   const chatBox = document.querySelector(".chat-container");
   const chatButton = document.querySelector(".chat-button");
-  const chatMessageContainer = document.querySelector(".chat-message-container");
+  const chatMessageContainer = document.querySelector(
+    ".chat-message-container"
+  );
   const result = document.getElementById("result");
 
   if (chatBox.style.display === "none" || chatBox.style.display === "") {
     chatBox.style.display = "flex"; // Mostra o chat
-    chatBox.classList.add("show"); // Adiciona a classe
-    chatMessageContainer.style.display = "none"; // Esconde a mensagem de boas-vindas e o botão
+    chatBox.classList.add("show"); // Adiciona a classe de exibição
+    chatMessageContainer.style.display = "none";
 
-    // Esconde as mensagens também
-    result.style.display = "block"; 
+    // Exibe o conteúdo do chat
+    result.style.display = "block";
 
-    // Posiciona o chat no topo
+    // Ajusta a posição do chat para sempre ficar no fundo à direita
     chatBox.style.position = "fixed";
-    chatBox.style.left = "80%"; // Centraliza no eixo X
-    chatBox.style.top = "40%"; // Posição no topo
+    chatBox.style.right = "10px"; // Coloca o chat à direita
+    chatBox.style.bottom = "20px"; // Coloca o chat na parte inferior
 
-    // Ajusta caso o chat ultrapasse os limites da tela
+    // Ajusta a altura do chat com base no espaço disponível na tela
     if (
-      parseInt(chatBox.style.left) + chatBox.offsetWidth >
-      window.innerWidth
+      parseInt(chatBox.style.bottom) + chatBox.offsetHeight >
+      window.innerHeight
     ) {
-      chatBox.style.left = window.innerWidth - chatBox.offsetWidth - 10 + "px";
+      chatBox.style.height = window.innerHeight - 100 + "px"; // Ajusta a altura para não ultrapassar a tela
     }
   } else {
     chatBox.style.display = "none"; // Esconde o chat
     chatBox.classList.remove("show");
 
     // Mostra novamente o botão e a mensagem
-    chatMessageContainer.style.display = "flex"; // Mostra a mensagem de boas-vindas e o botão
+    chatMessageContainer.style.display = "flex";
+    result.style.display = "none";
 
-    // Esconde as mensagens
-    result.style.display = "none"; 
-
-    // Posiciona o chat no canto inferior
+    // Reseta a posição do chat para o canto inferior direito
     chatBox.style.position = "fixed";
-    chatBox.style.left = "10px"; // Fixa o chat no canto inferior esquerdo
-    chatBox.style.bottom = "10px"; // Fixa o chat no canto inferior
+    chatBox.style.right = "10px";
+    chatBox.style.bottom = "10px";
   }
 }
 
 // Aplica as funções quando a página carregar
 document.addEventListener("DOMContentLoaded", () => {
   const chatButton = document.querySelector(".chat-button");
-  chatButton.style.position = "fixed"; // Garante que o botão fique fixo na tela
+  chatButton.style.position = "fixed";
 });

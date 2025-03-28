@@ -16,7 +16,7 @@ body {
     position: fixed; /* Torna o contêiner fixo na tela */
     bottom: 100px; /* Distância acima do botão do chat */
     right: 80px; /* Distância à esquerda do botão do chat */
-    background: #3caf85;
+    background: #00a195;
     color: white;
     padding: 18px 20px;
     border-radius: 10px;
@@ -32,13 +32,19 @@ body {
 
 /* Estilo da mensagem */
 .chat-message {
-    flex-grow: 1;
-    padding-right: 50px; /* Espaço entre a mensagem e o botão */
+    background: white; /* Alterado para branco para melhor contraste */
+    color: black; /* Texto preto para melhor visibilidade */
+    padding: 6px;
+    border-radius: 10px;
+    margin: 5px 0;
+    width: fit-content;
+    max-width: 80%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adiciona um leve sombreamento */
 }
 
 /* Estilo do botão flutuante */
 .chat-button {
-    background: #3caf85;
+    background: #00a195;
     color: white;
     border: none;
     border-radius: 50%;
@@ -54,13 +60,13 @@ body {
     cursor: pointer !important;
 }
 
-/* Estilo do avatar */
+/* Avatar global (para o botão) */
 .chat-avatar {
-    width: 100px;  /* Tamanho do avatar */
-    height: 50px;
-    border-radius: 300%;
+    width: 40px;  /* Tamanho do avatar */
+    height: 40px;
+    border-radius: 50%;
     object-fit: cover;  /* Garante que a imagem não distorça */
-    cursor: pointer; /* Adiciona o cursor de clique ao avatar */
+    cursor: pointer;
 }
 
 /* Hover effect no botão */
@@ -76,37 +82,39 @@ body {
 /* Se necessário, defina o cursor pointer diretamente nos elementos interativos */
 .chat-button img, .chat-header span {
     cursor: pointer !important;
+    
 }
-
 
 /* Estilo do contêiner do chat */
 .chat-container {
     position: fixed; /* Fixa o chat na tela */
-    bottom: 0; /* Posiciona o chat no fundo da tela */
-    right: 20px; /* Um pouco à direita */
-    width: 300px;
-    height: 500px;
+    bottom: 0; /* Posiciona o chat na parte inferior */
+    right: 20px; /* Mantém a distância à direita */
+    width: 20%;
+    height: 55vh;  /* Inicializa com uma altura padrão */
+    max-height: 80vh;  /* Limite máximo para o chat */
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    display: none; /* Inicialmente oculto */
+    display: none;  /* Inicialmente oculto */
     flex-direction: column;
     overflow: hidden;
     z-index: 1000;
-    visibility: hidden; /* Começa invisível */
-    opacity: 0; /* Começa invisível */
-    transition: opacity 0.3s ease-in-out;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out; /* Adiciona transição para altura */
 }
 
 /* Mostrar o chat */
 .chat-container.show {
     visibility: visible;
     opacity: 1;
+    /* height: 75vh; */
 }
 
 /* Estilo do cabeçalho do chat */
 .chat-header {
-    background: #3caf85;
+    background: #00a195;
     color: white;
     padding: 10px;
     text-align: center;
@@ -126,7 +134,6 @@ body {
     box-sizing: border-box; /* Garante que o padding não afete o tamanho do elemento */
 }
 
-
 /* Estilo do textarea */
 textarea {
     flex: 1;
@@ -141,14 +148,14 @@ button {
     margin-left: 8px;
     padding: 8px 12px;
     border: none;
-    background: #3caf85;
+    background: #00a195;
     color: white;
     border-radius: 5px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #3caf85;
+    background-color: #00a195;
 }
 
 /* Estilo da área de resultados (onde as mensagens aparecerão) */
@@ -157,7 +164,7 @@ button:hover {
     flex-direction: column;
     padding: 10px;
     overflow-y: auto;
-    max-height: 370px;
+    max-height: 70%;
     flex-grow: 1;
 }
 
@@ -174,20 +181,42 @@ button:hover {
     animation: none; /* Desativa a animação de fade-in */
 }
 
-
 /* Estilo da mensagem do usuário (direita) */
 .message.user {
-    background: #3caf85;
+    background: #00a195;
     color: white;
     align-self: flex-end; /* Alinha a mensagem do usuário à direita */
     margin-left: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adiciona um leve sombreamento */
 }
 
 /* Estilo da mensagem do bot (esquerda) */
 .message.bot {
-    background: #e0e0e0;
+    background: white;
     color: black;
-    align-self: flex-start; /* Alinha a mensagem do bot à esquerda */
+    align-self: flex-start;
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin: 5px 0;
+    width: fit-content;
+    max-width: 80%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center; /* Alinha o avatar e a mensagem na mesma linha */
+  }
+  
+ /* Ajustando o tamanho do avatar dentro do chat */
+.message.bot .avatar {
+    width: 35px;  /* Ajuste o tamanho conforme necessário */
+    height: 35px; /* Ajuste o tamanho conforme necessário */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;  /* Espaço entre o avatar e a mensagem */
+}
+
+/* Ajustando o tamanho do avatar */
+.message.bot .avatar {
+    transform: scale(1);  /* Retirei o "scale(0.8)" para que o avatar tenha o tamanho real */
 }
 
 /* Estilo da animação para "digitando..." */
@@ -228,3 +257,44 @@ button,
 textarea {
     cursor: pointer !important;
 }
+
+/* Ajuste para telas de computador (largura maior que 1024px) */
+@media (min-width: 1024px) {
+    .chat-container {
+        width: 350px;  /* Aumenta a largura do chat para se ajustar melhor a telas grandes */
+        height: 60vh;  /* Ajusta a altura para que o chat ocupe uma boa parte da tela */
+    }
+
+    .chat-message-container {
+        bottom: 120px;  /* Ajusta a distância da mensagem inicial */
+        right: 120px;   /* Ajusta a distância do botão de chat */
+    }
+}
+
+/* Ajuste para telas de computador com resoluções médias (largura entre 768px e 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .chat-container {
+        width: 300px;  /* Ajuste a largura do chat para uma tela média */
+        height: 70vh;  /* Ajusta a altura para que o chat ocupe uma boa parte da tela */
+    }
+
+    .chat-message-container {
+        bottom: 100px;  /* Ajusta a posição da mensagem inicial */
+        right: 100px;   /* Ajusta a posição do botão */
+    }
+}
+
+/* Ajuste para telas grandes com altura reduzida (ex.: ao abrir F12, ajustando a altura do chat) */
+@media (min-width: 1024px) and (max-height: 900px) {
+    .chat-container {
+        width: 350px;  /* Largura do chat */
+        height: 50vh;  /* Ajusta a altura para não ultrapassar a tela */
+    }
+}
+
+a {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer; /* Adiciona o cursor de mãozinha para indicar que é clicável */
+  }
+  

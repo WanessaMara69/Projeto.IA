@@ -1,4 +1,4 @@
-curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCPlWLLSB38RGFX55PRfc0d56X4EcSajAs" \
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" \
 -H 'Content-Type: application/json' \
 -X POST \
 -d '{
